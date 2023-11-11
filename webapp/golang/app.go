@@ -83,6 +83,10 @@ func dbInitialize() {
 		"DELETE FROM comments WHERE id > 100000",
 		"UPDATE users SET del_flg = 0",
 		"UPDATE users SET del_flg = 1 WHERE id % 50 = 0",
+
+		"set global slow_query_log = 1",
+		"set global slow_query_log_file = '/var/log/mysql/mysql-slow.log'",
+		"set global long_query_time = 0",
 	}
 
 	for _, sql := range sqls {
