@@ -572,7 +572,7 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	posts, err := makePosts(results, getCSRFToken(r), false)
+	posts, err := makePostsForGetIndex(results, getCSRFToken(r), false)
 	if err != nil {
 		log.Print(err)
 		return
