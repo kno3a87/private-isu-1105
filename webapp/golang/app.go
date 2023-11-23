@@ -565,14 +565,23 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	query := `
+SELECT posts.id, posts.user_id, posts.body, posts.mime, posts.created_at
+FROM posts
+JOIN users ON posts.user_id = users.id
+WHERE posts.created_at <= ? AND users.del_flg = 0
+ORDER BY posts.created_at DESC
+LIMIT 20	
+`
+
 	results := []Post{}
-	err = db.Select(&results, "SELECT `id`, `user_id`, `body`, `mime`, `created_at` FROM `posts` WHERE `created_at` <= ? ORDER BY `created_at` DESC", t.Format(ISO8601Format))
+	err = db.Select(&results, query, t.Format(ISO8601Format))
 	if err != nil {
 		log.Print(err)
 		return
 	}
 
-	posts, err := makePosts(results, getCSRFToken(r), false)
+	posts, err := makePostsForGetIndex(results, getCSRFToken(r), false)
 	if err != nil {
 		log.Print(err)
 		return
