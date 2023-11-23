@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -753,7 +754,7 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
-		saveImage(fmt.Sprintf("../public/image/%d.%s", pid, ext), post.Imgdata)
+		saveImage(fmt.Sprintf("%d.%s", pid, ext), post.Imgdata)
 		return
 	}
 
@@ -761,17 +762,10 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 }
 
 func saveImage(filename string, data []byte) {
-	f, err := os.Create(filename)
-	if err != nil {
-		log.Print(err)
-		return
-	}
-	defer f.Close()
+	filePath := filepath.Join("../public/image", filename)
 
-	_, err = f.Write(data)
-	if err != nil {
-		log.Print(err)
-		return
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		log.Fatal(err)
 	}
 }
 
