@@ -212,10 +212,6 @@ func makePostsForGetIndex(results []Post, csrfToken string, allComments bool) ([
 		p.CSRFToken = csrfToken
 
 		posts = append(posts, p)
-
-		if len(posts) >= postsPerPage {
-			break
-		}
 	}
 
 	return posts, nil
@@ -445,6 +441,7 @@ FROM posts
 JOIN users ON posts.user_id = users.id
 WHERE users.del_flg = 0
 ORDER BY posts.created_at DESC
+LIMIT 20
 `
 
 	err := db.Select(&results, query)
