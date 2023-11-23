@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -311,7 +312,18 @@ func getTemplPath(filename string) string {
 
 func getInitialize(w http.ResponseWriter, r *http.Request) {
 	dbInitialize()
+	resetImageDir()
 	w.WriteHeader(http.StatusOK)
+}
+
+func resetImageDir() {
+	// 画像ディレクトリを空にする
+	cmd := exec.Command("/bin/bash", "-c", "rm -rf ../public/image/*")
+	err := cmd.Run()
+	if err != nil {
+		log.Print(err)
+		return
+	}
 }
 
 func getLogin(w http.ResponseWriter, r *http.Request) {
@@ -754,10 +766,19 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 			log.Print(err)
 			return
 		}
+		saveImage(fmt.Sprintf("%d.%s", pid, ext), post.Imgdata)
 		return
 	}
 
 	w.WriteHeader(http.StatusNotFound)
+}
+
+func saveImage(filename string, data []byte) {
+	filePath := filepath.Join("../public/image", filename)
+
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func postComment(w http.ResponseWriter, r *http.Request) {
