@@ -764,7 +764,6 @@ func getImage(w http.ResponseWriter, r *http.Request) {
 func saveImage(filename string, data []byte) {
 	filePath := filepath.Join("../public/image", filename)
 
-	log.Print(filePath)
 	if err := os.WriteFile(filePath, data, 0644); err != nil {
 		log.Fatal(err)
 	}
